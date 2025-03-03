@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReviewPro - Умная система сбора отзывов</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #f59e0b;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --success: #10b981;
+            --border-radius: 8px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #fafafa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .logo span {
+            color: var(--secondary);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 30px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--primary);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e68c07;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e5f2ff 100%);
+        }
+        
+        .hero-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .hero-text {
+            max-width: 600px;
+        }
+        
+        .hero-title {
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .hero-subtitle {
+            font-size: 20px;
+            margin-bottom: 30px;
+            color: #4b5563;
+        }
+        
+        .hero-image {
+            width: 40%;
+        }
+        
+        .hero-image img {
+            max-width: 100%;
+            border-radius: var(--border-radius);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .section-subtitle {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 60px;
+            color: #6b7280;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            background-color: #f9fafb;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .feature-icon {
+            font-size: 36px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .feature-text {
+            color: #6b7280;
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            padding: 80px 0;
+            background-color: #f3f4f6;
+        }
+        
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        
+        .step {
+            flex-basis: 30%;
+            text-align: center;
+            position: relative;
+        }
+        
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary);
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+        }
+        
+        .step-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .step-text {
+            color: #6b7280;
+        }
+        
+        /* Pricing */
+        .pricing {
+            padding: 80px 0;
+            background-color: white;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .pricing-card {
+            border: 1px solid #e5e7eb;
+            border-radius: var(--border-radius);
+            padding: 40px 30px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .pricing-card.popular {
+            border-color: var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .popular-badge {
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background-color: var(--secondary);
+            color: white;
+            padding: 5px 40px;
+            font-size: 14px;
+            font-weight: 600;
+            transform: rotate(45deg);
+        }
+        
+        .pricing-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .pricing-price {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .pricing-price span {
+            font-size: 16px;
+            font-weight: 400;
+            color: #6b7280;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .pricing-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+            color: #6b7280;
+        }
+        
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 80px 0;
+            background-color: #f3f4f6;
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .testimonial-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: #4b5563;
+            position: relative;
+        }
+        
+        .testimonial-text::before {
+            content: '"';
+            font-size: 60px;
+            position: absolute;
+            top: -20px;
+            left: -10px;
+            color: #e5e7eb;
+            z-index: -1;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            background-color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .author-info h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+        
+        .author-info p {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        /* CTA */
+        .cta {
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            text-align: center;
+        }
+        
+        .cta-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .cta-text {
+            font-size: 18px;
+            margin-bottom: 30px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .btn-light {
+            background-color: white;
+            color: var(--primary);
+        }
+        
+        .btn-light:hover {
+            background-color: #f3f4f6;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #f3f4f6;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            border-top: 1px solid #374151;
+            padding-top: 20px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+        
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero-text {
+                margin-bottom: A40px;
+            }
+            
+            .hero-image {
+                width: 80%;
+            }
+            
+            .step {
+                flex-basis: 100%;
+                margin-bottom: 40px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+            }
+            
+            nav ul {
+                margin-top: 20px;
+            }
+            
+            nav ul li {
+                margin: 0 10px;
+            }
+            
+            .section-title {
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">Review<span>Pro</span></a>
+                <nav>
+                    <ul>
+                        <li><a href="#features">Возможности</a></li>
+                        <li><a href="#how-it-works">Как это работает</a></li>
+                        <li><a href="#pricing">Тарифы</a></li>
+                        <li><a href="#testimonials">Отзывы</a></li>
+                    </ul>
+                </nav>
+                <a href="#cta" class="btn">Попробовать бесплатно</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">Увеличьте продажи с помощью отзывов клиентов</h1>
+                    <p class="hero-subtitle">Автоматизированная система сбора отзывов от клиентов сразу после покупки. Повысьте доверие к вашему бренду и улучшите качество обслуживания!</p>
+                    <a href="#cta" class="btn">Начать использовать</a>
+                    <a href="#how-it-works" class="btn btn-secondary" style="margin-left: 10px;">Как это работает</a>
+                </div>
+                <div class="hero-image">
+                    <img src="/api/placeholder/600/400" alt="ReviewPro Dashboard" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Возможности нашего сервиса</h2>
+            <p class="section-subtitle">ReviewPro предлагает полный набор инструментов для эффективного сбора и управления отзывами клиентов</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">Мгновенные SMS-уведомления</h3>
+                    <p class="feature-text">Автоматически отправляйте SMS с просьбой оставить отзыв сразу после покупки, когда впечатления клиента наиболее свежи.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Аналитика отзывов</h3>
+                    <p class="feature-text">Получайте подробную статистику по оценкам и комментариям. Выявляйте тренды и улучшайте свои продукты и услуги.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3 class="feature-title">Интеграция с Kaspi.kz</h3>
+                    <p class="feature-text">Легко подключайтесь к Kaspi и автоматически собирайте отзывы после каждой покупки через этот популярный маркетплейс.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⭐</div>
+                    <h3 class="feature-title">Управление репутацией</h3>
+                    <p class="feature-text">Оперативно реагируйте на негативные отзывы и превращайте недовольных клиентов в лояльных.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3 class="feature-title">Рост конверсии</h3>
+                    <p class="feature-text">Положительные отзывы повышают доверие к вашему бренду и увеличивают конверсию до 40%.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3 class="feature-title">Автоматизация процессов</h3>
+                    <p class="feature-text">Настройте один раз и забудьте. Система будет автоматически собирать и анализировать отзывы без вашего участия.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2 class="section-title">Как это работает</h2>
+            <p class="section-subtitle">Три простых шага для начала сбора отзывов от ваших клиентов</p>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Подключение</h3>
+                    <p class="step-text">Зарегистрируйтесь на нашей платформе и интегрируйте её с вашим магазином или маркетплейсом.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Настройка шаблонов</h3>
+                    <p class="step-text">Создайте персонализированные шаблоны SMS-сообщений для различных товаров или категорий.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Сбор отзывов</h3>
+                    <p class="step-text">Система автоматически отправляет SMS после покупки и собирает отзывы в вашем личном кабинете.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2 class="section-title">Тарифные планы</h2>
+            <p class="section-subtitle">Выберите тариф, который подходит вашему бизнесу</p>
+            
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3 class="pricing-title">Стартовый</h3>
+                    <div class="pricing-price">5 900 ₸<span>/месяц</span></div>
+                    <ul class="pricing-features">
+                        <li>До 150 SMS в месяц</li>
+                        <li>Базовая аналитика</li>
+                        <li>1 интеграция с маркетплейсом</li>
+                        <li>Email-поддержка</li>
+                        <li>1 шаблон SMS</li>
+                    </ul>
+                    <a href="#cta" class="btn">Выбрать тариф</a>
+                </div>
+                
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Популярный</div>
+                    <h3 class="pricing-title">Бизнес</h3>
+                    <div class="pricing-price">14 900 ₸<span>/месяц</span></div>
+                    <ul class="pricing-features">
+                        <li>До 500 SMS в месяц</li>
+                        <li>Расширенная аналитика</li>
+                        <li>3 интеграции с маркетплейсами</li>
+                        <li>Приоритетная поддержка</li>
+                        <li>5 шаблонов SMS</li>
+                        <li>Управление репутацией</li>
+                    </ul>
+                    <a href="#cta" class="btn">Выбрать тариф</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <h3 class="pricing-title">Премиум</h3>
+                    <div class="pricing-price">29 900 ₸<span>/месяц</span></div>
+                    <ul class="pricing-features">
+                        <li>Неограниченное количество SMS</li>
+                        <li>Полная аналитика и отчеты</li>
+                        <li>Неограниченные интеграции</li>
+                        <li>Персональный менеджер</li>
+                        <li>Неограниченное количество шаблонов</li>
+                        <li>API для разработчиков</li>
+                        <li>White Label решение</li>
+                    </ul>
+                    <a href="#cta" class="btn">Выбрать тариф</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2 class="section-title">Что говорят наши клиенты</h2>
+            <p class="section-subtitle">Отзывы от компаний, которые уже используют ReviewPro</p>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">После внедрения ReviewPro количество отзывов на нашей странице в Kaspi выросло на 300%. Это привело к увеличению продаж на 27% за первые два месяца.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">АМ</div>
+                        <div class="author-info">
+                            <h4>Алма Мусаева</h4>
+                            <p>Директор по маркетингу, TechStore</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <p class="testimonial-text">Простая интеграция и отличная поддержка. Сервис окупился уже в первый месяц использования. Теперь у нас самый высокий рейтинг среди конкурентов!</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">ЕК</div>
+                        <div class="author-info">
+                            <h4>Ержан Касымов</h4>
+                            <p>Владелец, MobileZone</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <p class="testimonial-text">Аналитика отзывов помогла нам выявить проблемы в одной из линеек товаров. Мы оперативно исправили ситуацию и избежали серьезных репутационных потерь.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">ДН</div>
+                        <div class="author-info">
+                            <h4>Динара Нурланова</h4>
+                            <p>Руководитель отдела продаж, BeautyShop</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta" id="cta">
+        <div class="container">
+            <h2 class="cta-title">Готовы увеличить продажи с помощью отзывов?</h2>
+            <p class="cta-text">Зарегистрируйтесь сейчас и получите 14 дней бесплатного использования сервиса. Никаких кредитных карт — просто попробуйте и убедитесь в эффективности.</p>
+            <form>
+                <input type="email" placeholder="Введите ваш email" style="padding: 12px 20px; min-width: 300px; border-radius: var(--border-radius); border: none; margin-right: 10px; margin-bottom: 10px;">
+                <button type="submit" class="btn btn-light">Начать бесплатно</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <h3>ReviewPro</h3>
+                    <ul class="footer-links">
+                        <li><a href="#features">Возможности</a></li>
+                        <li><a href="#pricing">Тарифы</a></li>
+                        <li><a href="#testimonials">Отзывы клиентов</a></li>
+                        <li><a href="#">Блог</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Поддержка</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Центр помощи</a></li>
+                        <li><a href="#">Документация API</a></li>
+                        <li><a href="#">Статус сервера</a></li>
+                        <li><a href="#">Связаться с нами</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Правовая информация</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Условия использования</a></li>
+                        <li><a href="#">Политика конфиденциальности</a></li>
+                        <li><a href="#">Обработка данных</a></li>
+                        <li><a href="#">Безопасность</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Контакты</h3>
+                    <ul class="footer-links">
+                        <li>г. Алматы, ул. Фурманова 174</li>
+                        <li>info@reviewpro.kz</li>
+                        <li>+7 (727) 123-45-67</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 ReviewPro. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
