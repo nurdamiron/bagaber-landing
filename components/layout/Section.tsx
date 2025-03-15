@@ -17,7 +17,7 @@ interface SectionProps {
   withGradient?: boolean;
   gradientColors?: string[];
   align?: 'left' | 'center' | 'right';
-  id?: string; // Для веб-якорей
+  id?: string; // For web anchors
 }
 
 const Section = ({
@@ -42,7 +42,7 @@ const Section = ({
   const content = (
     <View 
       style={[styles.container, containerStyle]}
-      // Для веб - добавляем id для навигации по якорям
+      // For web - add id for anchor navigation
       {...(id && { id })}
     >
       {title && (
@@ -55,6 +55,7 @@ const Section = ({
             titleStyle,
           ]}
           variant="h2"
+          fontFamily="Montserrat-Bold"
         >
           {title}
         </ThemedText>
@@ -70,6 +71,7 @@ const Section = ({
           ]}
           variant="subtitle1"
           color="secondary"
+          fontFamily="Montserrat-Regular"
         >
           {subtitle}
         </ThemedText>
@@ -98,11 +100,12 @@ const styles = StyleSheet.create({
   section: {
     paddingVertical: 60,
     paddingHorizontal: 20,
+    width: '100%',
   },
   container: {
     maxWidth: 1200,
     width: '100%',
-    alignSelf: 'center',
+    marginHorizontal: 'auto',
   },
   title: {
     fontSize: 32,

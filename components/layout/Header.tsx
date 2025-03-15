@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TouchableOpacity, Animated, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import { content } from '../../constants/content';
 import { colors } from '../../constants/Colors';
 import ThemedText from '../ThemedText';
@@ -85,26 +86,44 @@ const Header = () => {
         </TouchableOpacity>
         
         <Animated.View style={[styles.mobileMenu, { height: menuHeight, zIndex: 200, }]}>
-          {navItems.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.mobileMenuItem}
-              onPress={() => handleNavItemPress(item.id)}
-              activeOpacity={0.7}
-            >
-              <ThemedText variant="subtitle1">{item.label}</ThemedText>
-            </TouchableOpacity>
-          ))}
-          <TouchableOpacity 
-            style={styles.mobileMenuCta}
-            onPress={() => handleNavItemPress('contact')}
-            activeOpacity={0.8}
-          >
-            <ThemedText variant="button" color="white">
-              {content.hero.cta}
-            </ThemedText>
-          </TouchableOpacity>
+          {/* Apply blur effect to mobile menu */}
+          {Platform.OS !== 'web' ? (
+            <BlurView intensity={80} style={styles.blurContainer}>
+              {renderMobileMenuItems()}
+            </BlurView>
+          ) : (
+            <View style={styles.webMobileMenuContainer}>
+              {renderMobileMenuItems()}
+            </View>
+          )}
         </Animated.View>
+      </>
+    );
+  };
+  
+  // Mobile menu items
+  const renderMobileMenuItems = () => {
+    return (
+      <>
+        {navItems.map((item) => (
+          <TouchableOpacity
+            key={item.id}
+            style={styles.mobileMenuItem}
+            onPress={() => handleNavItemPress(item.id)}
+            activeOpacity={0.7}
+          >
+            <ThemedText variant="subtitle1">{item.label}</ThemedText>
+          </TouchableOpacity>
+        ))}
+        <TouchableOpacity 
+          style={styles.mobileMenuCta}
+          onPress={() => handleNavItemPress('contact')}
+          activeOpacity={0.8}
+        >
+          <ThemedText variant="button" color="white">
+            {content.hero.cta}
+          </ThemedText>
+        </TouchableOpacity>
       </>
     );
   };
@@ -137,8 +156,28 @@ const Header = () => {
     );
   };
   
+  // Render header content
+  const renderHeaderContent = () => {
+    return (
+      <View style={styles.headerContent}>
+        <View style={styles.logoContainer}>
+          <ThemedText 
+            variant="h4" 
+            style={styles.logo}
+            onPress={() => handleNavItemPress('hero')}
+          >
+            {content.meta.siteName}
+          </ThemedText>
+        </View>
+        
+        {isMobile ? renderMobileMenu() : renderDesktopMenu()}
+      </View>
+    );
+  };
+  
   return (
     <>
+      {/* Header background with blur */}
       <Animated.View
         style={[
           styles.headerBackground,
@@ -148,25 +187,21 @@ const Header = () => {
             zIndex: 100,
           },
         ]}
-      />
+      >
+        {Platform.OS !== 'web' ? (
+          <BlurView intensity={80} tint="light" style={styles.blurContainer} />
+        ) : (
+          // For web, we use a semi-transparent background with CSS backdrop-filter
+          <View style={styles.webBlurBackground} />
+        )}
+      </Animated.View>
       
+      {/* Header container */}
       <View style={[
         styles.header,
         isMobile ? { position: 'absolute', zIndex: 100 } : {}
       ]}>
-        <View style={styles.headerContent}>
-          <View style={styles.logoContainer}>
-            <ThemedText 
-              variant="h4" 
-              style={styles.logo}
-              onPress={() => handleNavItemPress('hero')}
-            >
-              {content.meta.siteName}
-            </ThemedText>
-          </View>
-          
-          {isMobile ? renderMobileMenu() : renderDesktopMenu()}
-        </View>
+        {renderHeaderContent()}
       </View>
     </>
   );
@@ -188,13 +223,29 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 80,
-    backgroundColor: colors.background,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)', // More opaque background to reduce interference
     zIndex: 99,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+    overflow: 'hidden',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(230, 230, 230, 0.5)', // Subtle border for better separation
+  },
+  webBlurBackground: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    ...Platform.select({
+      web: {
+        backdropFilter: 'blur(15px)',
+        WebkitBackdropFilter: 'blur(15px)', // For Safari support
+      },
+    }),
+  },
+  blurContainer: {
+    ...StyleSheet.absoluteFillObject,
   },
   headerContent: {
     flexDirection: 'row',
@@ -247,7 +298,7 @@ const styles = StyleSheet.create({
     top: 80,
     left: 0,
     right: 0,
-    backgroundColor: colors.background,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)', // More opaque background
     overflow: 'hidden',
     zIndex: 100,
     borderBottomWidth: 1,
@@ -257,6 +308,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 5,
+  },
+  webMobileMenuContainer: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    ...Platform.select({
+      web: {
+        backdropFilter: 'blur(15px)',
+        WebkitBackdropFilter: 'blur(15px)', // For Safari support
+      },
+    }),
   },
   mobileMenuItem: {
     paddingVertical: 16,

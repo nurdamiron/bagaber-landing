@@ -1,42 +1,40 @@
 // hooks/useResponsive.ts
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dimensions, ScaledSize } from 'react-native';
+
+// Screen size breakpoints (match common CSS breakpoints)
+export const breakpoints = {
+  xs: 0,    // Extra small devices
+  sm: 576,  // Small devices (phones)
+  md: 768,  // Medium devices (tablets)
+  lg: 992,  // Large devices (desktops)
+  xl: 1200, // Extra large devices
+};
 
 export type ScreenSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
-// Пороги для разных размеров экрана
-const breakpoints = {
-  xs: 0,
-  sm: 576,
-  md: 768,
-  lg: 992,
-  xl: 1200,
-};
-
 export const useResponsive = () => {
+  // Initialize with current window dimensions
   const [dimensions, setDimensions] = useState<ScaledSize>(Dimensions.get('window'));
   
   useEffect(() => {
+    // Function to handle dimension changes
     const onChange = ({ window }: { window: ScaledSize }) => {
       setDimensions(window);
     };
     
+    // Add event listener for dimension changes
     const subscription = Dimensions.addEventListener('change', onChange);
     
+    // Cleanup function
     return () => {
-      // В новых версиях RN
-      if (subscription?.remove) {
-        subscription.remove();
-      } else {
-        // Для обратной совместимости
-        Dimensions.removeEventListener('change', onChange);
-      }
+      subscription.remove();
     };
   }, []);
   
   const { width, height } = dimensions;
   
-  // Определяем текущий размер экрана
+  // Determine current screen size
   const getScreenSize = (): ScreenSize => {
     if (width >= breakpoints.xl) return 'xl';
     if (width >= breakpoints.lg) return 'lg';
@@ -45,43 +43,51 @@ export const useResponsive = () => {
     return 'xs';
   };
   
-  // Удобные проверки для разных размеров
+  // Convenience flags for different screen sizes
   const isXs = width < breakpoints.sm;
   const isSm = width >= breakpoints.sm && width < breakpoints.md;
   const isMd = width >= breakpoints.md && width < breakpoints.lg;
   const isLg = width >= breakpoints.lg && width < breakpoints.xl;
   const isXl = width >= breakpoints.xl;
   
-  // Проверки для более общих случаев
+  // More general device type flags
   const isMobile = width < breakpoints.md;
   const isTablet = width >= breakpoints.md && width < breakpoints.lg;
   const isDesktop = width >= breakpoints.lg;
   
-  // Функция для получения стилей в зависимости от размера экрана
-  const getResponsiveStyles = (styles: Record<ScreenSize | 'default', any>) => {
-    const currentSize = getScreenSize();
-    return styles[currentSize] || styles.default;
-  };
+  // Get orientation
+  const isPortrait = height > width;
+  const isLandscape = width > height;
   
-  // Функция для получения значения в зависимости от размера экрана
+  // Helper function for responsive styles
   const getResponsiveValue = <T>(values: Record<ScreenSize | 'default', T>): T => {
     const currentSize = getScreenSize();
     return values[currentSize] || values.default;
   };
   
   return {
+    // Dimensions
     width,
     height,
     screenSize: getScreenSize(),
+    
+    // Screen size flags
     isXs,
     isSm,
     isMd,
     isLg,
     isXl,
+    
+    // Device type flags
     isMobile,
     isTablet,
     isDesktop,
-    getResponsiveStyles,
+    
+    // Orientation
+    isPortrait,
+    isLandscape,
+    
+    // Helper functions
     getResponsiveValue,
   };
 };

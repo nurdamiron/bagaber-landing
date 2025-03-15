@@ -1,14 +1,23 @@
-// app.json - исправленная конфигурация
 {
   "expo": {
-    "name": "bagaber-landing",
+    "name": "Bagaber",
     "slug": "bagaber-landing",
     "version": "1.0.0",
-    "orientation": "default", // Меняем с "portrait" на "default" для поддержки всех ориентаций
+    "orientation": "default",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "bagaber",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -17,7 +26,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "softwareKeyboardLayoutMode": "resize" // Добавляем для лучшего поведения с клавиатурой
+      "softwareKeyboardLayoutMode": "resize",
+      "package": "com.bagaber.app"
     },
     "web": {
       "bundler": "metro",
@@ -26,6 +36,17 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Montserrat-Regular.ttf",
+            "./assets/fonts/Montserrat-Medium.ttf",
+            "./assets/fonts/Montserrat-SemiBold.ttf",
+            "./assets/fonts/Montserrat-Bold.ttf"
+          ]
+        }
+      ],
       [
         "expo-splash-screen",
         {

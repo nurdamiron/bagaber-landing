@@ -1,157 +1,122 @@
 // components/layout/Footer.tsx
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Platform, Linking } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Linking, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import ThemedText from '../ThemedText';
 import { content } from '../../constants/content';
 import { colors } from '../../constants/Colors';
-import ThemedText from '../ThemedText';
 import { useResponsive } from '../../hooks/useResponsive';
 
 const Footer = () => {
   const { isMobile } = useResponsive();
+  const currentYear = new Date().getFullYear();
   
-  // Функция для открытия ссылок
-  const handleLinkPress = (url: string) => {
+  // Function to handle contact links
+  const handleContactPress = (type: string, value: string) => {
     if (Platform.OS === 'web') {
-      window.open(url, '_blank');
+      if (type === 'email') {
+        window.location.href = `mailto:${value}`;
+      } else if (type === 'phone') {
+        window.location.href = `tel:${value}`;
+      } else if (type === 'map') {
+        window.open(`https://maps.google.com/?q=${encodeURIComponent(value)}`, '_blank');
+      }
     } else {
-      Linking.openURL(url);
+      if (type === 'email') {
+        Linking.openURL(`mailto:${value}`);
+      } else if (type === 'phone') {
+        Linking.openURL(`tel:${value}`);
+      } else if (type === 'map') {
+        Linking.openURL(`https://maps.google.com/?q=${encodeURIComponent(value)}`);
+      }
     }
   };
-
+  
   return (
-    <View style={[
-        styles.footer,
-        // Убираем fixed/absolute позиционирование, чтобы не блокировать скроллинг
-        { position: 'relative' }
-      ]}>
+    <View style={styles.footer}>
       <View style={styles.container}>
-        {/* Верхняя часть футера */}
-        <View style={[
-          styles.topSection, 
-          isMobile && { flexDirection: 'column' }
-        ]}>
-          <View style={[
-            styles.companyInfo, 
-            isMobile && { 
-              paddingRight: 0,
-              marginBottom: 40,
-              width: '100%'
-            }
-          ]}>
-            <ThemedText variant="h4" style={styles.logo}>
-              {content.meta.siteName}
+        {/* Contact info */}
+        <View style={styles.section}>
+          <ThemedText 
+            variant="h5" 
+            style={styles.sectionTitle}
+            fontFamily="Montserrat-SemiBold"
+          >
+            Контакты
+          </ThemedText>
+          
+          <TouchableOpacity 
+            style={styles.contactItem} 
+            onPress={() => handleContactPress('email', 'info@bagaber.kz')}
+          >
+            <Ionicons name="mail-outline" size={18} color={colors.primary} style={styles.contactIcon} />
+            <ThemedText 
+              variant="body2" 
+              style={styles.contactText}
+              fontFamily="Montserrat-Regular"
+            >
+              info@bagaber.kz
             </ThemedText>
-            <ThemedText variant="body2" color="textSecondary" style={styles.description}>
-              {content.meta.description}
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.contactItem} 
+            onPress={() => handleContactPress('phone', '+7 (777) 123-45-67')}
+          >
+            <Ionicons name="call-outline" size={18} color={colors.primary} style={styles.contactIcon} />
+            <ThemedText 
+              variant="body2" 
+              style={styles.contactText}
+              fontFamily="Montserrat-Regular"
+            >
+              +7 (777) 123-45-67
             </ThemedText>
-            <View style={styles.socialIcons}>
-              {content.footer.social.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.socialIcon}
-                  onPress={() => handleLinkPress(item.url)}
-                  activeOpacity={0.8}
-                >
-                  <Ionicons name={item.icon} size={24} color={colors.primary} />
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-
-          <View style={[
-            styles.linksContainer,
-            isMobile && { width: '100%' }
-          ]}>
-            <View style={[
-              styles.linksColumn,
-              isMobile && { minWidth: '45%' }
-            ]}>
-              <ThemedText variant="subtitle1" style={styles.linkTitle}>
-                Сервис
-              </ThemedText>
-              <TouchableOpacity onPress={() => {}}>
-                <ThemedText variant="body2" color="textSecondary" style={styles.linkItem}>
-                  Функции
-                </ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => {}}>
-                <ThemedText variant="body2" color="textSecondary" style={styles.linkItem}>
-                  Тарифы
-                </ThemedText>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => {}}>
-                <ThemedText variant="body2" color="textSecondary" style={styles.linkItem}>
-                  Отзывы
-                </ThemedText>
-              </TouchableOpacity>
-            </View>
-
-            <View style={[
-              styles.linksColumn,
-              isMobile && { minWidth: '45%' }
-            ]}>
-              <ThemedText variant="subtitle1" style={styles.linkTitle}>
-                Компания
-              </ThemedText>
-              {content.footer.links.map((link, index) => (
-                <TouchableOpacity 
-                  key={index} 
-                  onPress={() => handleLinkPress(link.url)}
-                >
-                  <ThemedText variant="body2" color="textSecondary" style={styles.linkItem}>
-                    {link.title}
-                  </ThemedText>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <View style={[
-              styles.linksColumn,
-              isMobile && { width: '100%', marginTop: 20 }
-            ]}>
-              <ThemedText variant="subtitle1" style={styles.linkTitle}>
-                Контакты
-              </ThemedText>
-              {content.contact.info.map((item, index) => (
-                <View key={index} style={styles.contactItem}>
-                  <Ionicons name={item.icon} size={16} color={colors.primary} style={styles.contactIcon} />
-                  <ThemedText variant="body2" color="textSecondary">
-                    {item.value}
-                  </ThemedText>
-                </View>
-              ))}
-            </View>
-          </View>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.contactItem} 
+            onPress={() => handleContactPress('map', 'г. Алматы, ул. Сатпаева 90/20')}
+          >
+            <Ionicons name="location-outline" size={18} color={colors.primary} style={styles.contactIcon} />
+            <ThemedText 
+              variant="body2" 
+              style={styles.contactText}
+              fontFamily="Montserrat-Regular"
+            >
+              г. Алматы, ул. Сатпаева 90/20
+            </ThemedText>
+          </TouchableOpacity>
         </View>
-
-        {/* Разделительная линия */}
-        <View style={styles.divider} />
-
-        {/* Нижняя часть футера */}
-        <View style={[
-          styles.bottomSection,
-          isMobile && { flexDirection: 'column', alignItems: 'center' }
-        ]}>
+        
+        {/* Copyright & Links */}
+        <View style={styles.bottom}>
           <ThemedText 
             variant="caption" 
-            color="textSecondary"
-            style={isMobile ? { marginBottom: 16, textAlign: 'center' } : null}
+            color="secondary"
+            fontFamily="Montserrat-Regular"
           >
-            {content.footer.copyright}
+            © {currentYear} Bagaber. Все права защищены
           </ThemedText>
-          <View style={styles.bottomLinks}>
-            {content.footer.links.slice(0, 2).map((link, index) => (
-              <TouchableOpacity 
-                key={index} 
-                onPress={() => handleLinkPress(link.url)}
-                style={styles.bottomLink}
+          
+          <View style={styles.links}>
+            <TouchableOpacity style={styles.link}>
+              <ThemedText 
+                variant="caption" 
+                color="secondary"
+                fontFamily="Montserrat-Regular"
               >
-                <ThemedText variant="caption" color="textSecondary">
-                  {link.title}
-                </ThemedText>
-              </TouchableOpacity>
-            ))}
+                О нас
+              </ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.link}>
+              <ThemedText 
+                variant="caption" 
+                color="secondary"
+                fontFamily="Montserrat-Regular"
+              >
+                Политика конфиденциальности
+              </ThemedText>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -161,67 +126,24 @@ const Footer = () => {
 
 const styles = StyleSheet.create({
   footer: {
-    backgroundColor: colors.surface,
-    paddingTop: 60,
+    backgroundColor: colors.backgroundLight,
+    paddingTop: 40,
     paddingBottom: 20,
     paddingHorizontal: 20,
-    width: '100%',
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
   container: {
     maxWidth: 1200,
     width: '100%',
-    alignSelf: 'center',
+    marginHorizontal: 'auto',
   },
-  topSection: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 40,
-  },
-  companyInfo: {
-    flex: 1,
-    minWidth: 300,
-    marginBottom: 30,
-    paddingRight: 40,
-  },
-  logo: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.primary,
-    marginBottom: 16,
-  },
-  description: {
-    marginBottom: 20,
-    lineHeight: 22,
-  },
-  socialIcons: {
-    flexDirection: 'row',
-  },
-  socialIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.backgroundLight,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  linksContainer: {
-    flex: 2,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  linksColumn: {
-    minWidth: 160,
+  section: {
     marginBottom: 30,
   },
-  linkTitle: {
-    fontWeight: '600',
+  sectionTitle: {
     marginBottom: 16,
-  },
-  linkItem: {
-    marginBottom: 12,
+    color: colors.text,
   },
   contactItem: {
     flexDirection: 'row',
@@ -229,24 +151,38 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   contactIcon: {
-    marginRight: 8,
+    marginRight: 10,
   },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-    marginBottom: 20,
+  contactText: {
+    color: colors.textSecondary,
   },
-  bottomSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  bottom: {
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingTop: 20,
+    flexDirection: 'column',
     alignItems: 'center',
-    flexWrap: 'wrap',
   },
-  bottomLinks: {
+  links: {
     flexDirection: 'row',
+    marginTop: 12,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
   },
-  bottomLink: {
-    marginLeft: 20,
+  link: {
+    marginHorizontal: 10,
+    marginVertical: 4,
+  },
+  
+  // Media queries for larger screens
+  '@media (min-width: 768px)': {
+    bottom: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    links: {
+      marginTop: 0,
+    },
   },
 });
 

@@ -10,57 +10,67 @@ import { useResponsive } from '../../hooks/useResponsive';
 
 const Pricing = () => {
   const { isMobile, isTablet } = useResponsive();
-
+  
   return (
     <Section
-      title={content.pricing.title}
-      subtitle={content.pricing.subtitle}
-      withGradient
-      gradientColors={['#FFFFFF', '#F8F9FE']}
+      title="Тарифы"
+      subtitle="Выберите подходящий тариф для вашего бизнеса"
       style={styles.section}
       id="pricing"
     >
-      <View style={[
-        styles.plansContainer, 
-        isMobile && styles.plansContainerMobile,
-        isTablet && { justifyContent: 'space-around' }
-      ]}>
+      <View style={styles.plansContainer}>
         {content.pricing.plans.map((plan) => (
           <View 
             key={plan.id} 
             style={[
               styles.planCard,
-              plan.popular && styles.popularPlan,
-              isMobile && styles.planCardMobile,
-              // Для планшетов - сделаем карточки чуть уже
-              isTablet && !isMobile && { width: '46%', marginBottom: 30 }
+              plan.id === 'pro' && styles.popularPlanCard
             ]}
           >
-            {plan.popular && (
+            {plan.id === 'pro' && (
               <View style={styles.popularBadge}>
-                <ThemedText variant="caption" color="white">
+                <ThemedText 
+                  variant="caption" 
+                  color="white"
+                  fontFamily="Montserrat-Medium"
+                >
                   Популярный выбор
                 </ThemedText>
               </View>
             )}
             
-            <ThemedText variant="h4" style={styles.planTitle}>
+            <ThemedText 
+              variant="h4" 
+              style={styles.planTitle}
+              fontFamily="Montserrat-Bold"
+            >
               {plan.title}
             </ThemedText>
             
-            <ThemedText variant="caption" color="secondary" style={styles.planDescription}>
+            <ThemedText 
+              variant="body2" 
+              color="secondary" 
+              style={styles.planDescription}
+              fontFamily="Montserrat-Regular"
+            >
               {plan.description}
             </ThemedText>
             
             <View style={styles.priceContainer}>
               <ThemedText 
-                variant="h2" 
-                color={plan.popular ? 'primary' : 'text'} 
+                variant="h3" 
+                color={plan.id === 'pro' ? 'primary' : 'text'} 
                 style={styles.price}
+                fontFamily="Montserrat-Bold"
               >
                 {plan.price}
               </ThemedText>
-              <ThemedText variant="caption" color="secondary" style={styles.period}>
+              <ThemedText 
+                variant="caption" 
+                color="secondary" 
+                style={styles.period}
+                fontFamily="Montserrat-Regular"
+              >
                 / {plan.period}
               </ThemedText>
             </View>
@@ -71,10 +81,14 @@ const Pricing = () => {
                   <Ionicons
                     name="checkmark-circle"
                     size={20}
-                    color={plan.popular ? colors.primary : colors.success}
+                    color={colors.success}
                     style={styles.featureIcon}
                   />
-                  <ThemedText variant="body2" style={styles.featureText}>
+                  <ThemedText 
+                    variant="body2" 
+                    style={styles.featureText}
+                    fontFamily="Montserrat-Regular"
+                  >
                     {feature}
                   </ThemedText>
                 </View>
@@ -82,15 +96,13 @@ const Pricing = () => {
             </View>
             
             <TouchableOpacity
-              style={[
-                styles.planButton,
-                plan.popular && styles.popularPlanButton,
-              ]}
+              style={styles.planButton}
               activeOpacity={0.8}
             >
               <ThemedText 
                 variant="button" 
-                color={plan.popular ? 'white' : 'primary'}
+                color="white"
+                fontFamily="Montserrat-Medium"
               >
                 {plan.cta}
               </ThemedText>
@@ -100,7 +112,12 @@ const Pricing = () => {
       </View>
       
       <View style={styles.noteContainer}>
-        <ThemedText variant="caption" color="secondary" style={styles.noteText}>
+        <ThemedText 
+          variant="caption" 
+          color="secondary" 
+          style={styles.noteText}
+          fontFamily="Montserrat-Regular"
+        >
           {content.pricing.note}
         </ThemedText>
       </View>
@@ -110,40 +127,34 @@ const Pricing = () => {
 
 const styles = StyleSheet.create({
   section: {
-    paddingVertical: 80,
+    paddingVertical: 70,
   },
   plansContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    marginTop: 40,
-    flexWrap: 'wrap',
-  },
-  plansContainerMobile: {
     flexDirection: 'column',
+    justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
+    maxWidth: 1200,
+    marginHorizontal: 'auto',
+    marginTop: 40,
   },
   planCard: {
-    width: 330,
-    backgroundColor: colors.background,
-    borderRadius: 16,
-    padding: 32,
-    margin: 16,
-    position: 'relative',
-    ...shadows.medium,
-  },
-  planCardMobile: {
     width: '100%',
     maxWidth: 380,
-    marginBottom: 32,
-    padding: 24,
-    margin: 0,
-    marginBottom: 40,
+    backgroundColor: colors.background,
+    borderRadius: 16,
+    padding: 30,
+    marginBottom: 30,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadows.small,
+    position: 'relative',
   },
-  popularPlan: {
+  popularPlanCard: {
     borderColor: colors.primary,
     borderWidth: 2,
     transform: [{ translateY: -8 }],
+    ...shadows.medium,
   },
   popularBadge: {
     position: 'absolute',
@@ -154,15 +165,17 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 16,
     borderRadius: 20,
+    zIndex: 1,
   },
   planTitle: {
+    fontSize: 24,
     textAlign: 'center',
     marginBottom: 8,
-    fontWeight: '600',
   },
   planDescription: {
     textAlign: 'center',
     marginBottom: 24,
+    color: colors.textSecondary,
   },
   priceContainer: {
     flexDirection: 'row',
@@ -171,10 +184,11 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   price: {
+    fontSize: 32,
     fontWeight: '700',
   },
   period: {
-    marginBottom: 8,
+    marginBottom: 6,
     marginLeft: 4,
   },
   featuresContainer: {
@@ -190,18 +204,15 @@ const styles = StyleSheet.create({
   },
   featureText: {
     flex: 1,
+    fontSize: 16,
   },
   planButton: {
-    backgroundColor: colors.backgroundLight,
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     paddingHorizontal: 24,
     borderRadius: 8,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  popularPlanButton: {
-    backgroundColor: colors.primary,
+    justifyContent: 'center',
   },
   noteContainer: {
     alignItems: 'center',
@@ -210,6 +221,19 @@ const styles = StyleSheet.create({
   noteText: {
     textAlign: 'center',
     paddingHorizontal: 20,
+  },
+  
+  // Media queries for larger screens
+  '@media (min-width: 768px)': {
+    plansContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      flexWrap: 'wrap',
+    },
+    planCard: {
+      width: '30%',
+      marginHorizontal: '1.5%',
+    },
   },
 });
 

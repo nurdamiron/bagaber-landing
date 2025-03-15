@@ -1,8 +1,7 @@
 // components/ThemedText.tsx
 import React from 'react';
-import { Text, TextStyle, StyleSheet, Platform, useWindowDimensions } from 'react-native';
+import { Text, TextStyle, StyleSheet } from 'react-native';
 import { colors } from '../constants/Colors';
-import { typography, responsiveFontSize } from '../constants/Typography';
 
 type TextVariant = 
   | 'h1' 
@@ -34,6 +33,7 @@ interface ThemedTextProps {
   color?: TextColor;
   style?: TextStyle | TextStyle[];
   align?: 'auto' | 'left' | 'right' | 'center' | 'justify';
+  fontFamily?: string;
   onPress?: () => void;
 }
 
@@ -43,12 +43,35 @@ const ThemedText = ({
   color = 'text',
   style,
   align = 'auto',
+  fontFamily,
   onPress,
   ...props
 }: ThemedTextProps) => {
-  const { width } = useWindowDimensions();
-  const isMobile = width < 768;
 
+  // Get font family based on variant
+  const getFontFamily = () => {
+    if (fontFamily) return { fontFamily };
+    
+    // Default font families based on variant
+    switch (variant) {
+      case 'h1':
+      case 'h2':
+      case 'h3':
+        return { fontFamily: 'Montserrat-Bold' };
+      case 'h4':
+      case 'h5':
+      case 'subtitle1':
+      case 'subtitle2':
+      case 'button':
+        return { fontFamily: 'Montserrat-SemiBold' };
+      case 'overline':
+        return { fontFamily: 'Montserrat-Medium' };
+      default:
+        return { fontFamily: 'Montserrat-Regular' };
+    }
+  };
+
+  // Get color style
   const getColorStyle = () => {
     switch (color) {
       case 'primary':
@@ -72,32 +95,11 @@ const ThemedText = ({
     }
   };
 
-  // Адаптация стилей для мобильных устройств
-  const getResponsiveStyle = () => {
-    if (isMobile) {
-      switch (variant) {
-        case 'h1':
-          return styles.h1Mobile;
-        case 'h2':
-          return styles.h2Mobile;
-        case 'h3':
-          return styles.h3Mobile;
-        case 'h4':
-          return styles.h4Mobile;
-        case 'h5':
-          return styles.h5Mobile;
-        default:
-          return {};
-      }
-    }
-    return {};
-  };
-
   const textStyle = [
     styles.base,
     styles[variant],
     getColorStyle(),
-    getResponsiveStyle(),
+    getFontFamily(),
     { textAlign: align },
     style,
   ];
@@ -111,87 +113,55 @@ const ThemedText = ({
 
 const styles = StyleSheet.create({
   base: {
-    fontFamily: typography.fontFamily,
+    // Base styles
   },
   h1: {
-    fontSize: typography.fontSize['6xl'],
-    fontWeight: typography.fontWeight.bold,
-    lineHeight: typography.lineHeight['5xl'],
-  },
-  h1Mobile: {
-    fontSize: typography.fontSize['4xl'],
-    lineHeight: typography.lineHeight['3xl'],
+    fontSize: 42,
+    lineHeight: 52,
   },
   h2: {
-    fontSize: typography.fontSize['4xl'],
-    fontWeight: typography.fontWeight.bold,
-    lineHeight: typography.lineHeight['4xl'],
-  },
-  h2Mobile: {
-    fontSize: typography.fontSize['3xl'],
-    lineHeight: typography.lineHeight['2xl'],
+    fontSize: 32,
+    lineHeight: 40,
   },
   h3: {
-    fontSize: typography.fontSize['3xl'],
-    fontWeight: typography.fontWeight.bold,
-    lineHeight: typography.lineHeight['3xl'],
-  },
-  h3Mobile: {
-    fontSize: typography.fontSize['2xl'],
-    lineHeight: typography.lineHeight.xl,
+    fontSize: 28,
+    lineHeight: 36,
   },
   h4: {
-    fontSize: typography.fontSize['2xl'],
-    fontWeight: typography.fontWeight.semibold,
-    lineHeight: typography.lineHeight['2xl'],
-  },
-  h4Mobile: {
-    fontSize: typography.fontSize.xl,
-    lineHeight: typography.lineHeight.lg,
+    fontSize: 24,
+    lineHeight: 32,
   },
   h5: {
-    fontSize: typography.fontSize.xl,
-    fontWeight: typography.fontWeight.semibold,
-    lineHeight: typography.lineHeight.xl,
-  },
-  h5Mobile: {
-    fontSize: typography.fontSize.lg,
-    lineHeight: typography.lineHeight.md,
+    fontSize: 20, 
+    lineHeight: 28,
   },
   subtitle1: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.medium,
-    lineHeight: typography.lineHeight.lg,
+    fontSize: 18,
+    lineHeight: 28,
   },
   subtitle2: {
-    fontSize: typography.fontSize.md,
-    fontWeight: typography.fontWeight.medium,
-    lineHeight: typography.lineHeight.md,
+    fontSize: 16,
+    lineHeight: 24,
   },
   body1: {
-    fontSize: typography.fontSize.md,
-    fontWeight: typography.fontWeight.regular,
-    lineHeight: typography.lineHeight.md,
+    fontSize: 16,
+    lineHeight: 24,
   },
   body2: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.regular,
-    lineHeight: typography.lineHeight.sm,
+    fontSize: 14,
+    lineHeight: 22,
   },
   button: {
-    fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium,
-    letterSpacing: typography.letterSpacing.wide,
+    fontSize: 16,
+    letterSpacing: 0.5,
   },
   caption: {
-    fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.regular,
-    lineHeight: typography.lineHeight.xs,
+    fontSize: 12,
+    lineHeight: 18,
   },
   overline: {
-    fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.semibold,
-    letterSpacing: typography.letterSpacing.wider,
+    fontSize: 12,
+    letterSpacing: 1,
     textTransform: 'uppercase',
   },
 });

@@ -8,11 +8,10 @@ import { content } from '../../constants/content';
 import { colors } from '../../constants/Colors';
 import { useResponsive } from '../../hooks/useResponsive';
 
-// Hero section - главная секция лендинга
 const Hero = () => {
-const { isMobile } = useResponsive();
+  const { isMobile, isTablet } = useResponsive();
   
-  // Обработчик для кнопок
+  // Handler for buttons
   const handleButtonPress = (id: string) => {
     if (Platform.OS === 'web') {
       const element = document.getElementById(id);
@@ -26,8 +25,7 @@ const { isMobile } = useResponsive();
     <View 
       style={[
         styles.container, 
-        // На мобильных уменьшаем минимальную высоту
-        isMobile && { minHeight: 400, height: 'auto' }
+        isMobile && { minHeight: 550 }
       ]} 
       id="hero"
     >
@@ -37,13 +35,19 @@ const { isMobile } = useResponsive();
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
       >
-        <View style={styles.content}>
-          <View style={[styles.textContainer, isMobile && styles.textContainerMobile]}>
-          <ThemedText 
+        <View style={[
+          styles.content,
+          isMobile && { paddingHorizontal: 20 }
+        ]}>
+          <View style={[
+            styles.textContainer, 
+            isMobile && styles.textContainerMobile
+          ]}>
+            <ThemedText 
               variant="h1" 
               style={[
                 styles.title, 
-                isMobile && { fontSize: 36, lineHeight: 44, textAlign: 'center' }
+                isMobile && { fontSize: 32, lineHeight: 40, textAlign: 'center' }
               ]}
             >
               {content.hero.title}
@@ -54,15 +58,21 @@ const { isMobile } = useResponsive();
               color="secondary" 
               style={[
                 styles.subtitle,
-                isMobile && { textAlign: 'center', fontSize: 16 }
+                isMobile && { textAlign: 'center', fontSize: 16, marginHorizontal: 10 }
               ]}
             >
               {content.hero.subtitle}
             </ThemedText>
             
-            <View style={[styles.buttonContainer, isMobile && styles.buttonContainerMobile]}>
+            <View style={[
+              styles.buttonContainer, 
+              isMobile && styles.buttonContainerMobile
+            ]}>
               <TouchableOpacity 
-                style={[styles.primaryButton, isMobile && { width: '100%', marginBottom: 12 }]} 
+                style={[
+                  styles.primaryButton, 
+                  isMobile && { width: '100%', marginBottom: 12 }
+                ]} 
                 onPress={() => handleButtonPress('contact')}
               >
                 <ThemedText variant="button" color="white">
@@ -71,7 +81,10 @@ const { isMobile } = useResponsive();
               </TouchableOpacity>
               
               <TouchableOpacity 
-                style={[styles.secondaryButton, isMobile && { width: '100%' }]}
+                style={[
+                  styles.secondaryButton, 
+                  isMobile && { width: '100%' }
+                ]}
                 onPress={() => handleButtonPress('features')}
               >
                 <ThemedText variant="button" color="primary">
@@ -113,26 +126,24 @@ const { isMobile } = useResponsive();
           
           {!isMobile && (
             <View style={styles.imageContainer}>
-              {/* Здесь будет изображение или иллюстрация */}
-              <View style={styles.imagePlaceholder}>
-                <View style={styles.kaspiPhone}>
-                  <View style={styles.phoneHeader}>
-                    <View style={styles.phoneCamera} />
-                  </View>
-                  <View style={styles.phoneScreen}>
-                    <View style={styles.ratingCard}>
-                      <ThemedText variant="subtitle2" color="text">Рейтинг магазина</ThemedText>
-                      <View style={styles.ratingStars}>
-                        {[1, 2, 3, 4, 5].map(star => (
-                          <Ionicons key={star} name="star" size={20} color="#FFD700" />
-                        ))}
-                        <ThemedText variant="subtitle1" style={{marginLeft: 8}}>4.9</ThemedText>
-                      </View>
+              {/* Phone mockup */}
+              <View style={styles.kaspiPhone}>
+                <View style={styles.phoneHeader}>
+                  <View style={styles.phoneCamera} />
+                </View>
+                <View style={styles.phoneScreen}>
+                  <View style={styles.ratingCard}>
+                    <ThemedText variant="subtitle2" color="text">Рейтинг магазина</ThemedText>
+                    <View style={styles.ratingStars}>
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <Ionicons key={star} name="star" size={20} color="#FFD700" />
+                      ))}
+                      <ThemedText variant="subtitle1" style={{marginLeft: 8}}>4.9</ThemedText>
                     </View>
-                    <View style={styles.messageContainer}>
-                      <View style={styles.message}>
-                        <ThemedText variant="caption">Спасибо за покупку! Оставьте, пожалуйста, отзыв о нашем магазине</ThemedText>
-                      </View>
+                  </View>
+                  <View style={styles.messageContainer}>
+                    <View style={styles.message}>
+                      <ThemedText variant="caption">Спасибо за покупку! Оставьте, пожалуйста, отзыв о нашем магазине</ThemedText>
                     </View>
                   </View>
                 </View>
@@ -141,35 +152,45 @@ const { isMobile } = useResponsive();
           )}
         </View>
         
-        {/* Декоративные элементы */}
-        <View style={[styles.shape, styles.shape1, isMobile && { width: 120, height: 120, right: '2%' }]} />
-        <View style={[styles.shape, styles.shape2, isMobile && { width: 100, height: 100, left: '5%' }]} />
-        <View style={[styles.shape, styles.shape3, isMobile && { width: 60, height: 60 }]} />      </LinearGradient>
+        {/* Decorative elements */}
+        <View style={[
+          styles.shape, 
+          styles.shape1, 
+          isMobile && { width: 120, height: 120, right: '2%' }
+        ]} />
+        <View style={[
+          styles.shape, 
+          styles.shape2, 
+          isMobile && { width: 100, height: 100, left: '5%' }
+        ]} />
+        <View style={[
+          styles.shape, 
+          styles.shape3, 
+          isMobile && { width: 60, height: 60 }
+        ]} />
+      </LinearGradient>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    height: 'auto', 
-    minHeight: 600,
     width: '100%',
+    minHeight: 700,
   },
   gradient: {
     flex: 1,
-    justifyContent: 'center',
-    paddingTop: 80, // Чтобы контент не перекрывался с хедером
-    paddingBottom: 40,
+    paddingTop: 40,
+    paddingBottom: 60,
   },
   content: {
     flexDirection: 'row',
     maxWidth: 1200,
     width: '100%',
     paddingHorizontal: 20,
-    alignSelf: 'center',
+    marginHorizontal: 'auto',
     justifyContent: 'space-between',
     alignItems: 'center',
-    flex: 1,
   },
   textContainer: {
     flex: 1,
@@ -181,14 +202,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    marginBottom: 20,
     fontSize: 48,
     fontWeight: '800',
+    marginBottom: 20,
+    color: '#172B4D',
   },
   subtitle: {
-    marginBottom: 32,
     fontSize: 20,
     lineHeight: 30,
+    marginBottom: 32,
+    color: '#5E6C84',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -233,28 +256,20 @@ const styles = StyleSheet.create({
   },
   statsContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
   statItem: {
-    marginRight: 20,
-    alignItems: Platform.OS === 'web' ? 'flex-start' : 'center',
+    alignItems: 'center',
   },
   statDivider: {
     width: 1,
     height: 40,
     backgroundColor: colors.border,
-    marginRight: 20,
+    marginHorizontal: 20,
   },
   imageContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  imagePlaceholder: {
-    width: 300,
-    height: 600,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -324,7 +339,7 @@ const styles = StyleSheet.create({
     padding: 16,
     maxWidth: '80%',
   },
-  // Декоративные формы
+  // Decorative shapes
   shape: {
     position: 'absolute',
     borderRadius: 100,
