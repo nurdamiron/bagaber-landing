@@ -1,8 +1,10 @@
+// components/layout/Section.tsx
 import React, { ReactNode } from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ThemedText from '../ThemedText';
 import { colors } from '../../constants/Colors';
+import { useResponsive } from '../../hooks/useResponsive';
 
 interface SectionProps {
   children: ReactNode;
@@ -15,6 +17,7 @@ interface SectionProps {
   withGradient?: boolean;
   gradientColors?: string[];
   align?: 'left' | 'center' | 'right';
+  id?: string; // Для веб-якорей
 }
 
 const Section = ({
@@ -28,15 +31,27 @@ const Section = ({
   withGradient = false,
   gradientColors = ['#F8F9FE', '#FFFFFF'],
   align = 'center',
+  id,
 }: SectionProps) => {
+  const { isMobile } = useResponsive();
+  
+  const sectionPadding = isMobile 
+    ? { paddingVertical: 40, paddingHorizontal: 16 } 
+    : { paddingVertical: 60, paddingHorizontal: 20 };
+  
   const content = (
-    <View style={[styles.container, containerStyle]}>
+    <View 
+      style={[styles.container, containerStyle]}
+      // Для веб - добавляем id для навигации по якорям
+      {...(id && { id })}
+    >
       {title && (
         <ThemedText
           style={[
             styles.title,
             align === 'left' && { textAlign: 'left' },
             align === 'right' && { textAlign: 'right' },
+            isMobile && styles.titleMobile,
             titleStyle,
           ]}
           variant="h2"
@@ -50,6 +65,7 @@ const Section = ({
             styles.subtitle,
             align === 'left' && { textAlign: 'left' },
             align === 'right' && { textAlign: 'right' },
+            isMobile && styles.subtitleMobile,
             subtitleStyle,
           ]}
           variant="subtitle1"
@@ -66,7 +82,7 @@ const Section = ({
     return (
       <LinearGradient
         colors={gradientColors}
-        style={[styles.section, style]}
+        style={[styles.section, sectionPadding, style]}
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
       >
@@ -75,7 +91,7 @@ const Section = ({
     );
   }
 
-  return <View style={[styles.section, style]}>{content}</View>;
+  return <View style={[styles.section, sectionPadding, style]}>{content}</View>;
 };
 
 const styles = StyleSheet.create({
@@ -95,12 +111,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: colors.text,
   },
+  titleMobile: {
+    fontSize: 28,
+    marginBottom: 12,
+  },
   subtitle: {
     fontSize: 18,
     marginBottom: 40,
     textAlign: 'center',
     paddingHorizontal: 20,
     color: colors.textSecondary,
+  },
+  subtitleMobile: {
+    fontSize: 16,
+    marginBottom: 30,
+    paddingHorizontal: 0,
   },
 });
 

@@ -1,14 +1,15 @@
+// components/sections/HowItWorks.tsx
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Section from '../layout/Section';
 import ThemedText from '../ThemedText';
 import { content } from '../../constants/content';
 import { colors, shadows } from '../../constants/Colors';
+import { useResponsive } from '../../hooks/useResponsive';
 
 const HowItWorks = () => {
-  const windowWidth = Dimensions.get('window').width;
-  const isMobile = windowWidth < 768;
+  const { isMobile, isTablet } = useResponsive();
 
   return (
     <Section
@@ -19,9 +20,20 @@ const HowItWorks = () => {
       style={styles.section}
       id="how-it-works"
     >
-      <View style={[styles.stepsContainer, isMobile && styles.stepsContainerMobile]}>
+      <View style={[
+        styles.stepsContainer, 
+        isMobile && styles.stepsContainerMobile,
+        isTablet && !isMobile && { justifyContent: 'space-around' }
+      ]}>
         {content.howItWorks.steps.map((step, index) => (
-          <View key={index} style={[styles.stepCard, isMobile && styles.stepCardMobile]}>
+          <View 
+            key={index} 
+            style={[
+              styles.stepCard, 
+              isMobile && styles.stepCardMobile,
+              isTablet && !isMobile && { width: '45%', marginBottom: 40 }
+            ]}
+          >
             <View style={styles.stepNumberContainer}>
               <ThemedText variant="h3" color="primary" style={styles.stepNumber}>
                 {step.number}
@@ -40,10 +52,24 @@ const HowItWorks = () => {
               {step.description}
             </ThemedText>
             
-            {/* Стрелка между шагами (кроме последнего) */}
-            {!isMobile && index < content.howItWorks.steps.length - 1 && (
+            {/* Стрелка между шагами (кроме последнего) на десктопе */}
+            {!isMobile && !isTablet && index < content.howItWorks.steps.length - 1 && (
               <View style={styles.stepArrow}>
                 <Ionicons name="arrow-forward" size={24} color={colors.primary} />
+              </View>
+            )}
+            
+            {/* Стрелка на планшете (вниз) */}
+            {isTablet && !isMobile && index % 2 === 0 && index < content.howItWorks.steps.length - 1 && (
+              <View style={styles.tabletStepArrow}>
+                <Ionicons name="arrow-forward" size={24} color={colors.primary} />
+              </View>
+            )}
+            
+            {/* Стрелка на планшете (следующая строка) */}
+            {isTablet && !isMobile && index % 2 === 1 && index < content.howItWorks.steps.length - 2 && (
+              <View style={styles.tabletRowArrow}>
+                <Ionicons name="arrow-down" size={24} color={colors.primary} />
               </View>
             )}
           </View>
@@ -51,13 +77,28 @@ const HowItWorks = () => {
       </View>
       
       {/* Дополнительный призыв к действию */}
-      <View style={styles.ctaContainer}>
-        <ThemedText variant="subtitle1" color="secondary" style={styles.ctaText}>
+      <View style={[
+        styles.ctaContainer,
+        isMobile && { padding: 24 }
+      ]}>
+        <ThemedText 
+          variant="subtitle1" 
+          color="secondary" 
+          style={[
+            styles.ctaText,
+            isMobile && { fontSize: 16, lineHeight: 24 }
+          ]}
+        >
           Начните автоматизировать сбор отзывов уже сегодня и увидите результаты в течение недели
         </ThemedText>
-        <View style={styles.ctaButton}>
-          <ThemedText variant="button" color="white">Попробовать бесплатно</ThemedText>
-        </View>
+        <TouchableOpacity 
+          style={styles.ctaButton}
+          activeOpacity={0.8}
+        >
+          <ThemedText variant="button" color="white">
+            Попробовать бесплатно
+          </ThemedText>
+        </TouchableOpacity>
       </View>
     </Section>
   );
@@ -77,6 +118,7 @@ const styles = StyleSheet.create({
   },
   stepsContainerMobile: {
     flexDirection: 'column',
+    alignItems: 'center',
   },
   stepCard: {
     width: '22%',
@@ -89,9 +131,8 @@ const styles = StyleSheet.create({
   },
   stepCardMobile: {
     width: '100%',
-    marginBottom: 30,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    marginBottom: 40,
+    padding: 20,
   },
   stepNumberContainer: {
     position: 'absolute',
@@ -131,6 +172,19 @@ const styles = StyleSheet.create({
     right: -12,
     top: '50%',
     marginTop: -12,
+  },
+  // Стрелки для планшета
+  tabletStepArrow: {
+    position: 'absolute',
+    right: -30,
+    top: '50%',
+    marginTop: -12,
+  },
+  tabletRowArrow: {
+    position: 'absolute',
+    bottom: -30,
+    left: '50%',
+    marginLeft: -12,
   },
   ctaContainer: {
     alignItems: 'center',

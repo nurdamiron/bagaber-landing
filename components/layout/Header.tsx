@@ -1,39 +1,21 @@
+// components/layout/Header.tsx
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Animated, Platform, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Animated, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { content } from '../../constants/content';
 import { colors } from '../../constants/Colors';
 import ThemedText from '../ThemedText';
+import { useResponsive } from '../../hooks/useResponsive';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(Dimensions.get('window').width);
+  const { isMobile } = useResponsive();
   
   // Анимированные значения
   const headerOpacity = new Animated.Value(0);
   const menuHeight = new Animated.Value(0);
   
-  // Отслеживаем изменение размера окна (для веб)
-  useEffect(() => {
-    if (Platform.OS === 'web') {
-      const updateDimension = () => {
-        setWindowWidth(Dimensions.get('window').width);
-        if (Dimensions.get('window').width > 768) {
-          setMenuOpen(false);
-        }
-      };
-      Dimensions.addEventListener('change', updateDimension);
-      return () => {
-        // Очистка слушателя (для старых версий React Native)
-        if (Dimensions.removeEventListener) {
-          Dimensions.removeEventListener('change', updateDimension);
-        }
-      };
-    }
-  }, []);
-  
-  // Отслеживаем скролл для изменения фона шапки (для веб)
   useEffect(() => {
     if (Platform.OS === 'web') {
       const handleScroll = () => {
@@ -93,6 +75,7 @@ const Header = () => {
         <TouchableOpacity
           style={styles.menuButton}
           onPress={() => setMenuOpen(!menuOpen)}
+          activeOpacity={0.7}
         >
           <Ionicons
             name={menuOpen ? 'close-outline' : 'menu-outline'}
@@ -101,12 +84,13 @@ const Header = () => {
           />
         </TouchableOpacity>
         
-        <Animated.View style={[styles.mobileMenu, { height: menuHeight }]}>
+        <Animated.View style={[styles.mobileMenu, { height: menuHeight, zIndex: 200, }]}>
           {navItems.map((item) => (
             <TouchableOpacity
               key={item.id}
               style={styles.mobileMenuItem}
               onPress={() => handleNavItemPress(item.id)}
+              activeOpacity={0.7}
             >
               <ThemedText variant="subtitle1">{item.label}</ThemedText>
             </TouchableOpacity>
@@ -114,6 +98,7 @@ const Header = () => {
           <TouchableOpacity 
             style={styles.mobileMenuCta}
             onPress={() => handleNavItemPress('contact')}
+            activeOpacity={0.8}
           >
             <ThemedText variant="button" color="white">
               {content.hero.cta}
@@ -133,6 +118,7 @@ const Header = () => {
             key={item.id}
             style={styles.navItem}
             onPress={() => handleNavItemPress(item.id)}
+            activeOpacity={0.7}
           >
             <ThemedText variant="subtitle2">{item.label}</ThemedText>
           </TouchableOpacity>
@@ -141,6 +127,7 @@ const Header = () => {
         <TouchableOpacity 
           style={styles.ctaButton}
           onPress={() => handleNavItemPress('contact')}
+          activeOpacity={0.8}
         >
           <ThemedText variant="button" color="white">
             {content.hero.cta}
@@ -157,20 +144,28 @@ const Header = () => {
           styles.headerBackground,
           {
             opacity: headerOpacity,
-            position: Platform.OS === 'web' ? 'fixed' : 'absolute',
+            position: isMobile ? 'absolute' : (Platform.OS === 'web' ? 'fixed' : 'absolute'),
+            zIndex: 100,
           },
         ]}
       />
       
-      <View style={styles.header}>
+      <View style={[
+        styles.header,
+        isMobile ? { position: 'absolute', zIndex: 100 } : {}
+      ]}>
         <View style={styles.headerContent}>
           <View style={styles.logoContainer}>
-            <ThemedText variant="h4" style={styles.logo}>
+            <ThemedText 
+              variant="h4" 
+              style={styles.logo}
+              onPress={() => handleNavItemPress('hero')}
+            >
               {content.meta.siteName}
             </ThemedText>
           </View>
           
-          {windowWidth > 768 ? renderDesktopMenu() : renderMobileMenu()}
+          {isMobile ? renderMobileMenu() : renderDesktopMenu()}
         </View>
       </View>
     </>
@@ -219,6 +214,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     color: colors.primary,
+    ...Platform.select({
+      web: {
+        cursor: 'pointer',
+      }
+    }),
   },
   navContainer: {
     flexDirection: 'row',
@@ -252,6 +252,11 @@ const styles = StyleSheet.create({
     zIndex: 100,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 5,
   },
   mobileMenuItem: {
     paddingVertical: 16,

@@ -1,19 +1,20 @@
+// components/sections/Features.tsx
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Section from '../layout/Section';
 import ThemedText from '../ThemedText';
 import { content } from '../../constants/content';
 import { colors, shadows } from '../../constants/Colors';
+import { useResponsive } from '../../hooks/useResponsive';
 
 const Features = () => {
-  const windowWidth = Dimensions.get('window').width;
-  const isMobile = windowWidth < 768;
+  const { isMobile, isTablet, isDesktop } = useResponsive();
   
-  // Расчёт количества элементов в строке на основе ширины экрана
+  // Расчёт количества элементов в строке на основе типа устройства
   const getColumnCount = () => {
-    if (windowWidth >= 992) return 3; // Desktop - 3 колонки
-    if (windowWidth >= 768) return 2; // Tablet - 2 колонки
+    if (isDesktop) return 3; // Desktop - 3 колонки
+    if (isTablet) return 2;  // Tablet - 2 колонки
     return 1; // Mobile - 1 колонка
   };
   
@@ -37,6 +38,7 @@ const Features = () => {
             key={feature.id} 
             style={[
               styles.featureCard,
+              isMobile && styles.featureCardMobile,
               { width: columnCount === 1 ? '100%' : `${100 / columnCount - 4}%` }
             ]}
           >
@@ -73,6 +75,12 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     marginHorizontal: 8,
     ...shadows.small,
+    flex: 1,
+    minHeight: 220,
+  },
+  featureCardMobile: {
+    marginHorizontal: 0,
+    padding: 20,
   },
   iconContainer: {
     width: 60,

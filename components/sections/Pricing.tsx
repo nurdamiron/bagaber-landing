@@ -1,14 +1,15 @@
+// components/sections/Pricing.tsx
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Section from '../layout/Section';
 import ThemedText from '../ThemedText';
 import { content } from '../../constants/content';
 import { colors, shadows } from '../../constants/Colors';
+import { useResponsive } from '../../hooks/useResponsive';
 
 const Pricing = () => {
-  const windowWidth = Dimensions.get('window').width;
-  const isMobile = windowWidth < 768;
+  const { isMobile, isTablet } = useResponsive();
 
   return (
     <Section
@@ -19,7 +20,11 @@ const Pricing = () => {
       style={styles.section}
       id="pricing"
     >
-      <View style={[styles.plansContainer, isMobile && styles.plansContainerMobile]}>
+      <View style={[
+        styles.plansContainer, 
+        isMobile && styles.plansContainerMobile,
+        isTablet && { justifyContent: 'space-around' }
+      ]}>
         {content.pricing.plans.map((plan) => (
           <View 
             key={plan.id} 
@@ -27,6 +32,8 @@ const Pricing = () => {
               styles.planCard,
               plan.popular && styles.popularPlan,
               isMobile && styles.planCardMobile,
+              // Для планшетов - сделаем карточки чуть уже
+              isTablet && !isMobile && { width: '46%', marginBottom: 30 }
             ]}
           >
             {plan.popular && (
@@ -46,7 +53,11 @@ const Pricing = () => {
             </ThemedText>
             
             <View style={styles.priceContainer}>
-              <ThemedText variant="h2" color={plan.popular ? 'primary' : 'text'} style={styles.price}>
+              <ThemedText 
+                variant="h2" 
+                color={plan.popular ? 'primary' : 'text'} 
+                style={styles.price}
+              >
                 {plan.price}
               </ThemedText>
               <ThemedText variant="caption" color="secondary" style={styles.period}>
@@ -75,6 +86,7 @@ const Pricing = () => {
                 styles.planButton,
                 plan.popular && styles.popularPlanButton,
               ]}
+              activeOpacity={0.8}
             >
               <ThemedText 
                 variant="button" 
@@ -103,6 +115,7 @@ const styles = StyleSheet.create({
   plansContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'flex-start',
     marginTop: 40,
     flexWrap: 'wrap',
   },
@@ -123,6 +136,9 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 380,
     marginBottom: 32,
+    padding: 24,
+    margin: 0,
+    marginBottom: 40,
   },
   popularPlan: {
     borderColor: colors.primary,
@@ -193,6 +209,7 @@ const styles = StyleSheet.create({
   },
   noteText: {
     textAlign: 'center',
+    paddingHorizontal: 20,
   },
 });
 

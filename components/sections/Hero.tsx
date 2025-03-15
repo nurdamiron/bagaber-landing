@@ -1,15 +1,16 @@
+// components/sections/Hero.tsx
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, ImageBackground, Platform, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import ThemedText from '../ThemedText';
 import { content } from '../../constants/content';
 import { colors } from '../../constants/Colors';
+import { useResponsive } from '../../hooks/useResponsive';
 
 // Hero section - главная секция лендинга
 const Hero = () => {
-  const windowWidth = Dimensions.get('window').width;
-  const isMobile = windowWidth < 768;
+const { isMobile } = useResponsive();
   
   // Обработчик для кнопок
   const handleButtonPress = (id: string) => {
@@ -22,7 +23,14 @@ const Hero = () => {
   };
 
   return (
-    <View style={styles.container} id="hero">
+    <View 
+      style={[
+        styles.container, 
+        // На мобильных уменьшаем минимальную высоту
+        isMobile && { minHeight: 400, height: 'auto' }
+      ]} 
+      id="hero"
+    >
       <LinearGradient
         colors={['#F0F4FF', '#FFFFFF']}
         style={styles.gradient}
@@ -31,21 +39,30 @@ const Hero = () => {
       >
         <View style={styles.content}>
           <View style={[styles.textContainer, isMobile && styles.textContainerMobile]}>
-            <ThemedText variant="h1" style={styles.title}>
+          <ThemedText 
+              variant="h1" 
+              style={[
+                styles.title, 
+                isMobile && { fontSize: 36, lineHeight: 44, textAlign: 'center' }
+              ]}
+            >
               {content.hero.title}
             </ThemedText>
             
             <ThemedText 
               variant="subtitle1" 
               color="secondary" 
-              style={styles.subtitle}
+              style={[
+                styles.subtitle,
+                isMobile && { textAlign: 'center', fontSize: 16 }
+              ]}
             >
               {content.hero.subtitle}
             </ThemedText>
             
             <View style={[styles.buttonContainer, isMobile && styles.buttonContainerMobile]}>
               <TouchableOpacity 
-                style={styles.primaryButton} 
+                style={[styles.primaryButton, isMobile && { width: '100%', marginBottom: 12 }]} 
                 onPress={() => handleButtonPress('contact')}
               >
                 <ThemedText variant="button" color="white">
@@ -54,7 +71,7 @@ const Hero = () => {
               </TouchableOpacity>
               
               <TouchableOpacity 
-                style={styles.secondaryButton}
+                style={[styles.secondaryButton, isMobile && { width: '100%' }]}
                 onPress={() => handleButtonPress('features')}
               >
                 <ThemedText variant="button" color="primary">
@@ -69,17 +86,24 @@ const Hero = () => {
               </TouchableOpacity>
             </View>
             
-            <View style={styles.statsContainer}>
-              <View style={styles.statItem}>
+            <View style={[
+              styles.statsContainer, 
+              isMobile && { flexDirection: 'column', alignItems: 'center' }
+            ]}>
+              <View style={[styles.statItem, isMobile && { marginBottom: 20 }]}>
                 <ThemedText variant="h4" color="primary">200+</ThemedText>
                 <ThemedText variant="caption" color="secondary">Активных продавцов</ThemedText>
               </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
+              
+              {!isMobile && <View style={styles.statDivider} />}
+              
+              <View style={[styles.statItem, isMobile && { marginBottom: 20 }]}>
                 <ThemedText variant="h4" color="primary">+0.5★</ThemedText>
                 <ThemedText variant="caption" color="secondary">Средний рост рейтинга</ThemedText>
               </View>
-              <View style={styles.statDivider} />
+              
+              {!isMobile && <View style={styles.statDivider} />}
+              
               <View style={styles.statItem}>
                 <ThemedText variant="h4" color="primary">10ч</ThemedText>
                 <ThemedText variant="caption" color="secondary">Экономия времени в неделю</ThemedText>
@@ -118,17 +142,16 @@ const Hero = () => {
         </View>
         
         {/* Декоративные элементы */}
-        <View style={[styles.shape, styles.shape1]} />
-        <View style={[styles.shape, styles.shape2]} />
-        <View style={[styles.shape, styles.shape3]} />
-      </LinearGradient>
+        <View style={[styles.shape, styles.shape1, isMobile && { width: 120, height: 120, right: '2%' }]} />
+        <View style={[styles.shape, styles.shape2, isMobile && { width: 100, height: 100, left: '5%' }]} />
+        <View style={[styles.shape, styles.shape3, isMobile && { width: 60, height: 60 }]} />      </LinearGradient>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    height: Platform.OS === 'web' ? '100vh' : 'auto',
+    height: 'auto', 
     minHeight: 600,
     width: '100%',
   },
@@ -136,6 +159,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingTop: 80, // Чтобы контент не перекрывался с хедером
+    paddingBottom: 40,
   },
   content: {
     flexDirection: 'row',
@@ -173,6 +197,7 @@ const styles = StyleSheet.create({
   buttonContainerMobile: {
     flexDirection: 'column',
     alignItems: 'center',
+    width: '100%',
   },
   primaryButton: {
     backgroundColor: colors.primary,
@@ -180,6 +205,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     borderRadius: 8,
     marginRight: 16,
+    alignItems: 'center',
     ...Platform.select({
       web: {
         cursor: 'pointer',
@@ -189,6 +215,7 @@ const styles = StyleSheet.create({
   secondaryButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 16,
     paddingHorizontal: 32,
     borderRadius: 8,

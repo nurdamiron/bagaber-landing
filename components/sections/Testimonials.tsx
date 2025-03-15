@@ -1,14 +1,22 @@
+// components/sections/Testimonials.tsx
 import React from 'react';
-import { View, StyleSheet, Image, Dimensions } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Section from '../layout/Section';
 import ThemedText from '../ThemedText';
 import { content } from '../../constants/content';
 import { colors, shadows } from '../../constants/Colors';
+import { useResponsive } from '../../hooks/useResponsive';
 
 const Testimonials = () => {
-  const windowWidth = Dimensions.get('window').width;
-  const isMobile = windowWidth < 768;
+  const { isMobile, isTablet } = useResponsive();
+
+  // Определяем ширину карточек с отзывами на основе типа устройства
+  const getCardWidth = () => {
+    if (isMobile) return '100%';
+    if (isTablet) return '48%';
+    return '31%';
+  };
 
   return (
     <Section
@@ -20,8 +28,18 @@ const Testimonials = () => {
       {/* Статистические данные */}
       <View style={[styles.statsContainer, isMobile && styles.statsContainerMobile]}>
         {content.testimonials.stats.map((stat, index) => (
-          <View key={index} style={styles.statBox}>
-            <ThemedText variant="h2" color="primary" style={styles.statValue}>
+          <View key={index} style={[
+            styles.statBox, 
+            isMobile && styles.statBoxMobile
+          ]}>
+            <ThemedText 
+              variant="h2" 
+              color="primary" 
+              style={[
+                styles.statValue,
+                isMobile && { fontSize: 32 }
+              ]}
+            >
               {stat.value}
             </ThemedText>
             <ThemedText variant="subtitle2" color="secondary" style={styles.statLabel}>
@@ -32,9 +50,19 @@ const Testimonials = () => {
       </View>
 
       {/* Карточки с отзывами */}
-      <View style={[styles.testimonialCards, isMobile && styles.testimonialCardsMobile]}>
+      <View style={[
+        styles.testimonialCards, 
+        isMobile && styles.testimonialCardsMobile,
+        isTablet && { justifyContent: 'space-around' }
+      ]}>
         {content.testimonials.items.map((testimonial) => (
-          <View key={testimonial.id} style={styles.testimonialCard}>
+          <View 
+            key={testimonial.id} 
+            style={[
+              styles.testimonialCard,
+              { width: getCardWidth() }
+            ]}
+          >
             <View style={styles.quoteIconContainer}>
               <Ionicons name="chatbubble" size={22} color={colors.primary} />
             </View>
@@ -68,7 +96,14 @@ const Testimonials = () => {
       
       {/* Дополнительная информация */}
       <View style={styles.additionalInfo}>
-        <ThemedText variant="subtitle1" color="secondary" style={styles.additionalInfoText}>
+        <ThemedText 
+          variant="subtitle1" 
+          color="secondary" 
+          style={[
+            styles.additionalInfoText,
+            isMobile && { fontSize: 16, lineHeight: 24 }
+          ]}
+        >
           Присоединяйтесь к сотням довольных продавцов и начните улучшать свой рейтинг на Kaspi уже сегодня!
         </ThemedText>
       </View>
@@ -89,6 +124,7 @@ const styles = StyleSheet.create({
   statsContainerMobile: {
     flexDirection: 'column',
     alignItems: 'center',
+    marginHorizontal: 0,
   },
   statBox: {
     alignItems: 'center',
@@ -96,6 +132,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundLight,
     borderRadius: 12,
     minWidth: '25%',
+    marginBottom: 16,
+  },
+  statBoxMobile: {
+    width: '80%',
     marginBottom: 16,
   },
   statValue: {
@@ -114,9 +154,9 @@ const styles = StyleSheet.create({
   },
   testimonialCardsMobile: {
     flexDirection: 'column',
+    alignItems: 'center',
   },
   testimonialCard: {
-    width: isMobile => isMobile ? '100%' : '31%',
     backgroundColor: colors.background,
     borderRadius: 16,
     padding: 24,

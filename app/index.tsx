@@ -1,5 +1,6 @@
+// app/index.tsx - исправленная версия
 import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View, Platform, Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
@@ -14,19 +15,25 @@ import Testimonials from '../components/sections/Testimonials';
 import Pricing from '../components/sections/Pricing';
 import Contact from '../components/sections/Contact';
 
-// Theme
+// Theme & Utilities
 import { colors } from '../constants/Colors';
 
 export default function LandingScreen() {
+  const { height } = Dimensions.get('window');
+
   return (
     <SafeAreaProvider>
       <StatusBar style="auto" />
-      <SafeAreaView style={styles.container} edges={['top']}>
+      {/* Убираем edges={['top']} для лучшей совместимости */}
+      <SafeAreaView style={styles.container}>
         <Header />
         <ScrollView 
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
+          showsVerticalScrollIndicator={true} // Включаем индикатор скролла
+          scrollEnabled={true} // Явно указываем, что скролл разрешен
+          bounces={true} // Добавляем отскок при скролле для лучшего UX
+          keyboardShouldPersistTaps="handled" // Улучшаем поведение при наличии форм
         >
           <Hero />
           <ProblemSolution />
@@ -35,8 +42,8 @@ export default function LandingScreen() {
           <Testimonials />
           <Pricing />
           <Contact />
+          <Footer />
         </ScrollView>
-        <Footer />
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -46,11 +53,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+    // Убираем фиксированную высоту и позволяем контейнеру расширяться
   },
   scrollView: {
     flex: 1,
+    backgroundColor: colors.background,
   },
   scrollContent: {
-    flexGrow: 1,
+    flexGrow: 1, // Позволяет контенту расширяться
+    // Не устанавливаем фиксированную высоту, чтобы контент мог прокручиваться
   },
 });

@@ -1,14 +1,15 @@
+// components/sections/ProblemSolution.tsx
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Section from '../layout/Section';
 import ThemedText from '../ThemedText';
 import { content } from '../../constants/content';
 import { colors, shadows } from '../../constants/Colors';
+import { useResponsive } from '../../hooks/useResponsive';
 
 const ProblemSolution = () => {
-  const windowWidth = Dimensions.get('window').width;
-  const isMobile = windowWidth < 768;
+  const { isMobile, isTablet } = useResponsive();
   
   return (
     <Section
@@ -17,9 +18,17 @@ const ProblemSolution = () => {
       style={styles.section}
       id="problem-solution"
     >
-      <View style={[styles.container, isMobile && styles.containerMobile]}>
+      <View style={[
+        styles.container, 
+        isMobile && styles.containerMobile,
+        isTablet && !isMobile && { flexDirection: 'column' }
+      ]}>
         {/* Колонка с проблемами */}
-        <View style={[styles.column, isMobile && styles.columnMobile]}>
+        <View style={[
+          styles.column, 
+          isMobile && styles.columnMobile,
+          isTablet && !isMobile && { maxWidth: '100%', marginBottom: 40 }
+        ]}>
           <View style={styles.columnHeader}>
             <View style={[styles.iconCircle, styles.problemIconCircle]}>
               <Ionicons name="alert-circle" size={24} color={colors.error} />
@@ -27,23 +36,34 @@ const ProblemSolution = () => {
             <ThemedText variant="h4" style={styles.columnTitle}>Проблемы</ThemedText>
           </View>
           
-          {content.problemSolution.problems.map((item) => (
-            <View key={item.id} style={styles.card}>
-              <View style={[styles.cardIcon, styles.problemIcon]}>
-                <Ionicons name={item.icon} size={20} color={colors.error} />
+          <View style={[
+            styles.cardsContainer,
+            isTablet && !isMobile && { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }
+          ]}>
+            {content.problemSolution.problems.map((item, index) => (
+              <View 
+                key={item.id} 
+                style={[
+                  styles.card,
+                  isTablet && !isMobile && { width: '31%' }
+                ]}
+              >
+                <View style={[styles.cardIcon, styles.problemIcon]}>
+                  <Ionicons name={item.icon} size={20} color={colors.error} />
+                </View>
+                <ThemedText variant="subtitle1" style={styles.cardTitle}>
+                  {item.title}
+                </ThemedText>
+                <ThemedText variant="body2" color="secondary" style={styles.cardDescription}>
+                  {item.description}
+                </ThemedText>
               </View>
-              <ThemedText variant="subtitle1" style={styles.cardTitle}>
-                {item.title}
-              </ThemedText>
-              <ThemedText variant="body2" color="secondary" style={styles.cardDescription}>
-                {item.description}
-              </ThemedText>
-            </View>
-          ))}
+            ))}
+          </View>
         </View>
         
         {/* Центральная стрелка для десктопа */}
-        {!isMobile && (
+        {!isMobile && !isTablet && (
           <View style={styles.arrowContainer}>
             <View style={styles.arrowLine} />
             <View style={styles.arrowCircle}>
@@ -52,8 +72,22 @@ const ProblemSolution = () => {
           </View>
         )}
         
+        {/* Стрелка для планшета - горизонтальная */}
+        {isTablet && !isMobile && (
+          <View style={styles.tabletArrowContainer}>
+            <View style={styles.tabletArrowLine} />
+            <View style={styles.arrowCircle}>
+              <Ionicons name="arrow-down" size={24} color="#FFFFFF" />
+            </View>
+          </View>
+        )}
+        
         {/* Колонка с решениями */}
-        <View style={[styles.column, isMobile && styles.columnMobile]}>
+        <View style={[
+          styles.column, 
+          isMobile && styles.columnMobile,
+          isTablet && !isMobile && { maxWidth: '100%' }
+        ]}>
           <View style={styles.columnHeader}>
             <View style={[styles.iconCircle, styles.solutionIconCircle]}>
               <Ionicons name="checkmark-circle" size={24} color={colors.success} />
@@ -61,19 +95,30 @@ const ProblemSolution = () => {
             <ThemedText variant="h4" style={styles.columnTitle}>Решения</ThemedText>
           </View>
           
-          {content.problemSolution.solutions.map((item) => (
-            <View key={item.id} style={styles.card}>
-              <View style={[styles.cardIcon, styles.solutionIcon]}>
-                <Ionicons name={item.icon} size={20} color={colors.success} />
+          <View style={[
+            styles.cardsContainer,
+            isTablet && !isMobile && { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }
+          ]}>
+            {content.problemSolution.solutions.map((item, index) => (
+              <View 
+                key={item.id} 
+                style={[
+                  styles.card,
+                  isTablet && !isMobile && { width: '31%' }
+                ]}
+              >
+                <View style={[styles.cardIcon, styles.solutionIcon]}>
+                  <Ionicons name={item.icon} size={20} color={colors.success} />
+                </View>
+                <ThemedText variant="subtitle1" style={styles.cardTitle}>
+                  {item.title}
+                </ThemedText>
+                <ThemedText variant="body2" color="secondary" style={styles.cardDescription}>
+                  {item.description}
+                </ThemedText>
               </View>
-              <ThemedText variant="subtitle1" style={styles.cardTitle}>
-                {item.title}
-              </ThemedText>
-              <ThemedText variant="body2" color="secondary" style={styles.cardDescription}>
-                {item.description}
-              </ThemedText>
-            </View>
-          ))}
+            ))}
+          </View>
         </View>
       </View>
     </Section>
@@ -124,6 +169,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '600',
   },
+  cardsContainer: {
+    flexDirection: 'column',
+  },
   card: {
     backgroundColor: colors.background,
     borderRadius: 12,
@@ -152,7 +200,7 @@ const styles = StyleSheet.create({
   cardDescription: {
     lineHeight: 22,
   },
-  // Стрелка между колонками
+  // Стрелка между колонками для десктопа (вертикальная)
   arrowContainer: {
     width: 80,
     alignItems: 'center',
@@ -163,6 +211,21 @@ const styles = StyleSheet.create({
     height: 2,
     backgroundColor: colors.primary,
     width: '100%',
+    position: 'absolute',
+  },
+  // Стрелка для планшета (горизонтальная)
+  tabletArrowContainer: {
+    height: 60,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    marginVertical: 20,
+  },
+  tabletArrowLine: {
+    width: 2,
+    backgroundColor: colors.primary,
+    height: '100%',
     position: 'absolute',
   },
   arrowCircle: {

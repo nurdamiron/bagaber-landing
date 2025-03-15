@@ -1,11 +1,15 @@
+// components/layout/Footer.tsx
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Platform, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { content } from '../../constants/content';
 import { colors } from '../../constants/Colors';
 import ThemedText from '../ThemedText';
+import { useResponsive } from '../../hooks/useResponsive';
 
 const Footer = () => {
+  const { isMobile } = useResponsive();
+  
   // Функция для открытия ссылок
   const handleLinkPress = (url: string) => {
     if (Platform.OS === 'web') {
@@ -16,11 +20,25 @@ const Footer = () => {
   };
 
   return (
-    <View style={styles.footer}>
+    <View style={[
+        styles.footer,
+        // Убираем fixed/absolute позиционирование, чтобы не блокировать скроллинг
+        { position: 'relative' }
+      ]}>
       <View style={styles.container}>
         {/* Верхняя часть футера */}
-        <View style={styles.topSection}>
-          <View style={styles.companyInfo}>
+        <View style={[
+          styles.topSection, 
+          isMobile && { flexDirection: 'column' }
+        ]}>
+          <View style={[
+            styles.companyInfo, 
+            isMobile && { 
+              paddingRight: 0,
+              marginBottom: 40,
+              width: '100%'
+            }
+          ]}>
             <ThemedText variant="h4" style={styles.logo}>
               {content.meta.siteName}
             </ThemedText>
@@ -33,6 +51,7 @@ const Footer = () => {
                   key={index}
                   style={styles.socialIcon}
                   onPress={() => handleLinkPress(item.url)}
+                  activeOpacity={0.8}
                 >
                   <Ionicons name={item.icon} size={24} color={colors.primary} />
                 </TouchableOpacity>
@@ -40,8 +59,14 @@ const Footer = () => {
             </View>
           </View>
 
-          <View style={styles.linksContainer}>
-            <View style={styles.linksColumn}>
+          <View style={[
+            styles.linksContainer,
+            isMobile && { width: '100%' }
+          ]}>
+            <View style={[
+              styles.linksColumn,
+              isMobile && { minWidth: '45%' }
+            ]}>
               <ThemedText variant="subtitle1" style={styles.linkTitle}>
                 Сервис
               </ThemedText>
@@ -62,7 +87,10 @@ const Footer = () => {
               </TouchableOpacity>
             </View>
 
-            <View style={styles.linksColumn}>
+            <View style={[
+              styles.linksColumn,
+              isMobile && { minWidth: '45%' }
+            ]}>
               <ThemedText variant="subtitle1" style={styles.linkTitle}>
                 Компания
               </ThemedText>
@@ -78,7 +106,10 @@ const Footer = () => {
               ))}
             </View>
 
-            <View style={styles.linksColumn}>
+            <View style={[
+              styles.linksColumn,
+              isMobile && { width: '100%', marginTop: 20 }
+            ]}>
               <ThemedText variant="subtitle1" style={styles.linkTitle}>
                 Контакты
               </ThemedText>
@@ -98,8 +129,15 @@ const Footer = () => {
         <View style={styles.divider} />
 
         {/* Нижняя часть футера */}
-        <View style={styles.bottomSection}>
-          <ThemedText variant="caption" color="textSecondary">
+        <View style={[
+          styles.bottomSection,
+          isMobile && { flexDirection: 'column', alignItems: 'center' }
+        ]}>
+          <ThemedText 
+            variant="caption" 
+            color="textSecondary"
+            style={isMobile ? { marginBottom: 16, textAlign: 'center' } : null}
+          >
             {content.footer.copyright}
           </ThemedText>
           <View style={styles.bottomLinks}>
@@ -127,6 +165,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 20,
     paddingHorizontal: 20,
+    width: '100%',
   },
   container: {
     maxWidth: 1200,

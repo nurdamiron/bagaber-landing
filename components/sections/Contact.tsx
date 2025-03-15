@@ -1,14 +1,15 @@
+// components/sections/Contact.tsx
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, TextInput, Dimensions, Platform } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, TextInput, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Section from '../layout/Section';
 import ThemedText from '../ThemedText';
 import { content } from '../../constants/content';
 import { colors, shadows } from '../../constants/Colors';
+import { useResponsive } from '../../hooks/useResponsive';
 
 const Contact = () => {
-  const windowWidth = Dimensions.get('window').width;
-  const isMobile = windowWidth < 768;
+  const { isMobile, isTablet } = useResponsive();
   
   // Состояние для формы
   const [formData, setFormData] = useState({
@@ -45,9 +46,17 @@ const Contact = () => {
       style={styles.section}
       id="contact"
     >
-      <View style={[styles.contentContainer, isMobile && styles.contentContainerMobile]}>
+      <View style={[
+        styles.contentContainer, 
+        isMobile && styles.contentContainerMobile,
+        isTablet && !isMobile && { flexDirection: 'column' }
+      ]}>
         {/* Форма обратной связи */}
-        <View style={[styles.formContainer, isMobile && styles.formContainerMobile]}>
+        <View style={[
+          styles.formContainer, 
+          isMobile && styles.formContainerMobile,
+          isTablet && !isMobile && { maxWidth: '100%', marginBottom: 40 }
+        ]}>
           <View style={styles.formInner}>
             <ThemedText variant="h4" style={styles.formTitle}>
               Свяжитесь с нами
@@ -102,7 +111,10 @@ const Contact = () => {
               />
             </View>
             
-            <TouchableOpacity style={styles.submitButton}>
+            <TouchableOpacity 
+              style={styles.submitButton}
+              activeOpacity={0.8}
+            >
               <ThemedText variant="button" color="white">
                 Отправить сообщение
               </ThemedText>
@@ -111,7 +123,11 @@ const Contact = () => {
         </View>
         
         {/* FAQ и контактная информация */}
-        <View style={[styles.infoContainer, isMobile && styles.infoContainerMobile]}>
+        <View style={[
+          styles.infoContainer, 
+          isMobile && styles.infoContainerMobile,
+          isTablet && !isMobile && { maxWidth: '100%' }
+        ]}>
           {/* Контактная информация */}
           <View style={styles.contactInfoContainer}>
             <ThemedText variant="h4" style={styles.infoTitle}>
@@ -119,7 +135,7 @@ const Contact = () => {
             </ThemedText>
             
             {content.contact.info.map((item, index) => (
-                              <View key={index} style={styles.contactInfoItem}>
+              <View key={index} style={styles.contactInfoItem}>
                 <View style={styles.contactIconContainer}>
                   <Ionicons name={item.icon} size={20} color={colors.primary} />
                 </View>
@@ -141,6 +157,7 @@ const Contact = () => {
                 <TouchableOpacity 
                   style={styles.faqQuestion} 
                   onPress={() => toggleFaq(index)}
+                  activeOpacity={0.7}
                 >
                   <ThemedText variant="subtitle2" style={styles.faqQuestionText}>
                     {faq.question}
@@ -167,7 +184,13 @@ const Contact = () => {
       
       {/* Кнопка CTA */}
       <View style={styles.ctaContainer}>
-        <TouchableOpacity style={styles.ctaButton}>
+        <TouchableOpacity 
+          style={[
+            styles.ctaButton,
+            isMobile && { paddingHorizontal: 20, width: '90%' }
+          ]}
+          activeOpacity={0.8}
+        >
           <ThemedText variant="button" color="white" style={styles.ctaButtonText}>
             {content.contact.cta}
           </ThemedText>
