@@ -29,35 +29,60 @@ export default function LandingScreen() {
     'Montserrat-Bold': require('../assets/fonts/Montserrat-Bold.ttf'),
   });
   
-  // Remove any potential black banner/header
-  React.useLayoutEffect(() => {
-    if (Platform.OS === 'web') {
-      const bannerElements = document.querySelectorAll('[id^="index"]');
-      bannerElements.forEach(element => {
-        if (element.tagName !== 'DIV' && element.style && element.style.backgroundColor === '#000') {
-          element.style.display = 'none';
-        }
-      });
-    }
-  }, []);
-
-  // Add meta tags for web
+  // Безопасное удаление черной полосы сверху - только для веб-версии
   useEffect(() => {
-    if (Platform.OS === 'web') {
-      // Set viewport for proper mobile display
-      const meta = document.createElement('meta');
-      meta.name = 'viewport';
-      meta.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
-      document.head.appendChild(meta);
-      
-      // Set description for SEO
-      const metaDescription = document.createElement('meta');
-      metaDescription.name = 'description';
-      metaDescription.content = 'Bagaber - сервис для автоматического повышения рейтинга Kaspi-магазина через сбор отзывов покупателей';
-      document.head.appendChild(metaDescription);
-      
-      // Set page title
-      document.title = 'Bagaber - Повышайте рейтинг Kaspi-магазина автоматически';
+    // Используем проверку, чтобы избежать ошибки "document is not defined"
+    // и заворачиваем весь код в блок try-catch для безопасности
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && typeof document !== 'undefined') {
+      try {
+        // Скрытие нежелательных элементов
+        const removeBlackBanner = () => {
+          try {
+            // Скрываем элементы с id, начинающимся с "index"
+            const bannerElements = document.querySelectorAll('[id^="index"]');
+            bannerElements.forEach(element => {
+              if (element.tagName !== 'DIV' && element.style) {
+                element.style.display = 'none';
+              }
+            });
+            
+            // Также скрываем любые другие нежелательные элементы шапки
+            const unwantedHeaders = document.querySelectorAll('header:not(#main-header)');
+            unwantedHeaders.forEach(header => {
+              if (header && header.style) {
+                header.style.display = 'none';
+              }
+            });
+          } catch (e) {
+            console.warn('Error hiding banner:', e);
+          }
+        };
+        
+        // Запускаем процесс скрытия один раз
+        removeBlackBanner();
+        
+        // Настройка метатегов для SEO
+        try {
+          // Set viewport for proper mobile display
+          const meta = document.createElement('meta');
+          meta.name = 'viewport';
+          meta.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
+          document.head.appendChild(meta);
+          
+          // Set description for SEO
+          const metaDescription = document.createElement('meta');
+          metaDescription.name = 'description';
+          metaDescription.content = 'Bagaber - сервис для автоматического повышения рейтинга Kaspi-магазина через сбор отзывов покупателей';
+          document.head.appendChild(metaDescription);
+          
+          // Set page title
+          document.title = 'Bagaber - Повышайте рейтинг Kaspi-магазина автоматически';
+        } catch (e) {
+          console.warn('Error setting meta tags:', e);
+        }
+      } catch (e) {
+        console.warn('Error in web initialization:', e);
+      }
     }
   }, []);
 
@@ -100,6 +125,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingTop: 70, // Add padding for the fixed header
+    paddingTop: 80, // Add padding for the fixed header
   },
 });
