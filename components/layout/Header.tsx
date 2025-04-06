@@ -1,6 +1,6 @@
 // components/layout/Header.tsx
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Animated, Platform } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Animated, Dimensions, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { content } from '../../constants/content';
@@ -18,8 +18,24 @@ const Header = () => {
   const menuHeight = new Animated.Value(0);
   
   useEffect(() => {
+    const handleResize = () => {
+      setWindowDimensions(Dimensions.get('window'));
+    };
+
+    Dimensions.addEventListener('change', handleResize);
+    return () => {
+      // Clean up
+      if (Platform.OS === 'web') {
+        // For web
+        window.removeEventListener('resize', handleResize);
+      }
+    };
+  }, []);
+  
+  useEffect(() => {
     if (Platform.OS === 'web') {
       const handleScroll = () => {
+        // Check if we should show based on scroll position
         const newScrolled = window.scrollY > 50;
         if (newScrolled !== scrolled) {
           setScrolled(newScrolled);
@@ -63,6 +79,7 @@ const Header = () => {
   // Навигационные пункты
   const navItems = [
     { id: 'features', label: 'Функции' },
+    { id: 'statistics', label: 'Статистика' },
     { id: 'how-it-works', label: 'Как это работает' },
     { id: 'testimonials', label: 'Отзывы' },
     { id: 'pricing', label: 'Тарифы' },
@@ -85,7 +102,10 @@ const Header = () => {
           />
         </TouchableOpacity>
         
-        <Animated.View style={[styles.mobileMenu, { height: menuHeight, zIndex: 200, }]}>
+        <Animated.View style={[
+          styles.mobileMenu, 
+          { height: menuHeight, zIndex: 200 }
+        ]}>
           {/* Apply blur effect to mobile menu */}
           {Platform.OS !== 'web' ? (
             <BlurView intensity={80} style={styles.blurContainer}>
@@ -207,6 +227,23 @@ const Header = () => {
   );
 };
 
+// Platform-specific shadow styles
+const getShadowStyle = () => {
+  if (Platform.OS === 'web') {
+    return {
+      boxShadow: '0px 2px 12px rgba(0, 0, 0, 0.15)'
+    };
+  } else {
+    return {
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.15,
+      shadowRadius: 12,
+      elevation: 8,
+    };
+  }
+};
+
 const styles = StyleSheet.create({
   header: {
     position: 'absolute',
@@ -225,11 +262,7 @@ const styles = StyleSheet.create({
     height: 80,
     backgroundColor: 'rgba(255, 255, 255, 0.85)', // More opaque background to reduce interference
     zIndex: 99,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
+    ...getShadowStyle(),
     overflow: 'hidden',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(230, 230, 230, 0.5)', // Subtle border for better separation
@@ -303,11 +336,7 @@ const styles = StyleSheet.create({
     zIndex: 100,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 5,
+    ...getShadowStyle(),
   },
   webMobileMenuContainer: {
     ...StyleSheet.absoluteFillObject,
